@@ -146,7 +146,7 @@ int main(void)
         delay_1ms(time);
 
         if(equal_1(str_1)){
-            printf("OK\r\n");
+            printf("OK ^~^\r\n");
         }
 
         // printf("a usart transmit test example!\r\n");
