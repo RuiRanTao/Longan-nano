@@ -43,6 +43,7 @@ extern uint8_t rxbuffer[32];
 extern uint8_t txbuffer[];
 extern uint16_t t;
 extern uint8_t rxtrue[32];
+extern uint8_t flag_d;
 
 /*!
     \brief      this function handles USART RBNE interrupt request and TBE interrupt request
@@ -72,18 +73,27 @@ void USART0_IRQHandler(void)
     uint8_t ucTemp;
     if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
         ucTemp = usart_data_receive(USART0);   
-        if(ucTemp==0x0a)
+        if(ucTemp==0x0d)
+        {
+            flag_d=1;
+        }
+
+        if(ucTemp==0x0a && flag_d==1)
         {
             for(t=0;t<32;t++){
-                rxtrue[t]=rxbuffer[t];
+                if(rxbuffer[t]!=0x0d){
+                  rxtrue[t]=rxbuffer[t];
+                }
             }     
             for(t=0;t<32;t++){
                 rxbuffer[t] = 0;
             }     
             rxcount = 0;
+            flag_d = 0;
         }else
         {
              rxbuffer[rxcount++]=ucTemp;
-        }
+        }   
+        
     }
 }

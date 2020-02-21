@@ -44,6 +44,7 @@ OF SUCH DAMAGE.
 
 uint16_t len;
 uint16_t t;
+uint8_t flag_d=0;
 uint8_t txbuffer[] = "\n\rUSART interrupt test\n\r";
 uint8_t str_1[32]="abc";
 uint8_t rxbuffer[32];
@@ -146,7 +147,7 @@ int main(void)
         delay_1ms(time);
 
         if(equal_1(str_1)){
-            printf("OK ^~^\r\n");
+            printf("    ^~^\r\n");
         }
 
         // printf("a usart transmit test example!\r\n");
