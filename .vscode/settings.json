@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "gd32vf103_usart.h": "c",
+        "gd32vf103_eclic.h": "c",
+        "gd32vf103_it.h": "c",
+        "gd32vf103.h": "c"
+    }
+}

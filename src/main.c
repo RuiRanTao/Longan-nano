@@ -48,7 +48,7 @@ uint8_t txbuffer[] = "\n\rUSART interrupt test\n\r";
 uint8_t str_1[32]="abc";
 uint8_t rxbuffer[32];
 uint8_t rxtrue[32];
-uint8_t time=100;
+uint8_t time=150;
 
 
 
@@ -85,9 +85,6 @@ void _put_string(char *str)
     // 等待发送完成
     while(usart_flag_get(USART0,USART_FLAG_TC) == RESET);
 }
-
-
-
 
 int equal_1(uint8_t str[32])
 {
