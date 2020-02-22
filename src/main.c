@@ -89,9 +89,8 @@ void _put_string(char *str)
 
 int equal_1(uint8_t str[32])
 {
-    printf("%s\n", rxtrue);
-    for(t=0; t<31; t++)
-    if(str[t]!=rxtrue[t])
+    for(t=0; t<len; t++)
+    if(str[t]!=rxbuffer[t])
     {
         return 0;
     }
@@ -148,19 +147,21 @@ int main(void)
 		if(USART_RX_STA&0x8000)
 		{					   
 			len=USART_RX_STA&0x3fff;//得到此次接收到的数据长度
-			printf("\r\nYourmessage:\r\n\r\n");
+			printf("\r\nYourmessage:\r\n");
 			for(t=0;t<len;t++)
 			{
 				usart_data_transmit(USART0, rxbuffer[t]);//向串口1发送数据
 				while(usart_flag_get(USART0,USART_FLAG_TC)!=SET);//等待发送结束
 			}
-			printf("\r\n\r\n");//插入换行
-			USART_RX_STA=0;
+			printf("\r\n");//插入换行
+			USART_RX_STA=0;   
+            if(equal_1(str_1))
+            {
+                printf("    ^~^\r\n");
+            }
 		}
 
-        // if(equal_1(str_1)){
-        //     printf("    ^~^\r\n");
-        // }
+
 
         // printf("a usart transmit test example!\r\n");
         /* turn on LED1, turn off LED4 */
