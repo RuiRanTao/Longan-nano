@@ -44,6 +44,7 @@ extern uint8_t txbuffer[];
 extern uint16_t t;
 extern uint8_t rxtrue[32];
 extern uint8_t flag_d;
+extern uint16_t USART_RX_STA; 
 
 /*!
     \brief      this function handles USART RBNE interrupt request and TBE interrupt request
@@ -51,49 +52,29 @@ extern uint8_t flag_d;
     \param[out] none
     \retval     none
 */
-// void USART0_IRQHandler(void)
-// {
-//     if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
-//         /* receive data */
-//         rxbuffer[rxcount++] = usart_data_receive(USART0);
-//         if(rxcount == rx_size){
-//             usart_interrupt_disable(USART0, USART_INT_RBNE);
-//         }
-//     }
-//     if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_TBE)){
-//         /* transmit data */
-//         usart_data_transmit(USART0, txbuffer[txcount++]);
-//         if(txcount == tx_size){
-//             usart_interrupt_disable(USART0, USART_INT_TBE);
-//         }
-//     }
-// }
+
+
 void USART0_IRQHandler(void)
 {
-    uint8_t ucTemp;
+        uint8_t ucTemp;
     if(RESET != usart_interrupt_flag_get(USART0, USART_INT_FLAG_RBNE)){
-        ucTemp = usart_data_receive(USART0);   
-        if(ucTemp==0x0d)
-        {
-            flag_d=1;
-        }
-
-        if(ucTemp==0x0a && flag_d==1)
-        {
-            for(t=0;t<32;t++){
-                if(rxbuffer[t]!=0x0d){
-                  rxtrue[t]=rxbuffer[t];
+        ucTemp = usart_data_receive(USART0);  
+        if((USART_RX_STA&0x8000)==0)//接收未完成
+            {
+                if(USART_RX_STA&0x4000)//接收到了0x0d
+                {
+                    if(ucTemp!=0x0a)USART_RX_STA=0;//接收错误,重新开始
+                    else USART_RX_STA|=0x8000;	//接收完成了 
+                }else //还没收到0X0D
+                {	
+                    if(ucTemp==0x0d)USART_RX_STA|=0x4000;
+                    else
+                    {
+                        rxbuffer[USART_RX_STA&0X3FFF]=ucTemp;
+                        USART_RX_STA++;
+                        if(USART_RX_STA>(rx_size-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
+                    }		 
                 }
-            }     
-            for(t=0;t<32;t++){
-                rxbuffer[t] = 0;
-            }     
-            rxcount = 0;
-            flag_d = 0;
-        }else
-        {
-             rxbuffer[rxcount++]=ucTemp;
-        }   
-        
-    }
-}
+            }  	
+    }	
+} 			
